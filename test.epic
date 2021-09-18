@@ -1,7 +1,9 @@
-function add(a, b) {
-	return a + b;
-}
+var i = ;
 
-var i = 10.11;
-i = i + 1;
-print(i);
+
+//function add(a, b) {
+//	return a + b;
+//}
+
+//i = i + 1;
+//print(i);

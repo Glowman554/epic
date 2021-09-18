@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import io.github.glowman554.epic.lexer.LexerToken;
 import io.github.glowman554.epic.lexer.LexerTokenType;
 import io.github.glowman554.epic.parser.nodes.ListNode;
+import io.github.glowman554.epic.parser.nodes.VarAssignmentNode;
 
 public class Parser
 {
@@ -77,14 +78,14 @@ public class Parser
 			this.advance();
 		}
 
-		ParserNode statement = result.register(this.statement());
+		ParserToken statement = result.register(this.statement());
 		
 		if (result.error != null)
 		{
 			return result;
 		}
 
-		statements.add(statement);
+		statements.add(statement.node);
 
 		boolean more_statements = true;
 		while (true)
@@ -116,7 +117,7 @@ public class Parser
 				continue;
 			}
 
-			statements.add(statement);
+			statements.add(statement.node);
 		}
 
 		return result.success(new ListNode((statements.toArray(new Object[0]))));
@@ -135,7 +136,54 @@ public class Parser
 		{
 			System.out.println("function");
 		}
-		
-		return result;
+
+		ParserToken expression = result.register(this.expression());
+
+		if (result.error != null)
+		{
+			return result.failure(result.error);
+		}
+
+		return result.success(expression.node);
+	}
+
+	private ParserToken expression()
+	{
+		ParserToken result = new ParserToken();
+
+		System.out.println("expression for " + current.type);
+
+		if (this.current.matches(LexerTokenType.identifier, "var"))
+		{
+			result.register_advancement();
+			this.advance();
+
+			if (!this.current.matches(LexerTokenType.identifier))
+			{
+				return result.failure("Expected identifier after 'var'");
+			}
+
+			String variable_name = (String) this.current.value;
+
+			result.register_advancement();
+			this.advance();
+
+			if (!this.current.matches(LexerTokenType.assignment))
+			{
+				return result.failure("Expected '=' after variable name");
+			}
+
+			ParserToken expression = result.register(this.expression());
+			if (expression.error != null)
+			{
+				return expression;
+			}
+
+			return result.success(new VarAssignmentNode(variable_name, expression.node));
+		}
+
+		// TODO add binary operators like + and *
+
+		return result.failure("Not implemented!");
 	}
 }

@@ -14,7 +14,7 @@ public class ParserToken
 		this.advance_count++;
 	}
 
-	public ParserNode register(ParserToken token)
+	public ParserToken register(ParserToken token)
 	{
 		this.last_registered_advance_count = this.advance_count;
 		this.advance_count += token.advance_count;
@@ -24,10 +24,10 @@ public class ParserToken
 			this.error = token.error;
 		}
 
-		return token.node;
+		return token;
 	}
 
-	public ParserNode try_register(ParserToken token)
+	public ParserToken try_register(ParserToken token)
 	{
 		if (token.error != null)
 		{

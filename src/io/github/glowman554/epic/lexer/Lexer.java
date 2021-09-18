@@ -87,7 +87,18 @@ public class Lexer
 				case '/':
 					{
 						this.advance();
-						tokens.add(new LexerToken(LexerTokenType.divide));
+						if (this.current.charAt(0) == '/')
+						{
+							while (this.current != null && this.current.charAt(0) != '\n')
+							{
+								this.advance();
+							}
+							this.advance();
+						}
+						else
+						{
+							tokens.add(new LexerToken(LexerTokenType.divide));
+						}
 					}
 					break;
 				

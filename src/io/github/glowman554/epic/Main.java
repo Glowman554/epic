@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import io.github.glowman554.epic.lexer.Lexer;
 import io.github.glowman554.epic.lexer.LexerToken;
 import io.github.glowman554.epic.parser.Parser;
+import io.github.glowman554.epic.parser.ParserNodeType;
 import io.github.glowman554.epic.parser.ParserToken;
+import io.github.glowman554.epic.parser.nodes.ListNode;
 
 public class Main
 {
@@ -28,8 +30,15 @@ public class Main
 			Parser parser = new Parser(tokens);
 
 			ParserToken root = parser.parse();
+			System.out.println(root.error);
 
-			System.out.println(String.format("Token type %s", root.node.getType()));
+			if (root.node.getType() == ParserNodeType.list_node)
+			{
+				for (Object i : ((ListNode) root.node).list)
+				{
+					System.out.println(i.getClass());
+				}
+			}
 		}
 		catch (IOException e)
 		{
